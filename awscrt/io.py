@@ -304,6 +304,21 @@ class TlsContextOptions:
     The static `TlsContextOptions.create_X()` methods provide common TLS configurations.
     A default-initialized TlsContextOptions has `verify_peer` set True.
 
+    .. warning::
+        Overriding the trust store (via :meth:`override_default_trust_store()` or
+        :meth:`override_default_trust_store_from_path()`) **REPLACES** the system
+        trust store; it does **not** append to it. Once you override, the system's
+        default CA certificates are no longer trusted, and only the CA
+        certificate(s) you supply are used to verify the peer. If you still need to
+        trust CAs from the system store, include them in the PEM you pass.
+
+        For AWS IoT endpoints that use Amazon Trust Services (ATS), the presented
+        server chain may anchor at any one of several roots, so the PEM you supply
+        must contain the **complete** Amazon Trust Services anchor set:
+        Amazon Root CA 1 (RSA), Amazon Root CA 3 (ECC), and the Starfield
+        cross-sign root. Supplying only one of these is a common cause of
+        "certificate unknown" / untrusted-certificate handshake failures.
+
     Attributes:
         min_tls_ver (TlsVersion): Minimum TLS version to use.
             System defaults are used by default.
@@ -569,6 +584,20 @@ class TlsContextOptions:
     def override_default_trust_store_from_path(self, ca_dirpath=None, ca_filepath=None):
         """Override default trust store.
 
+        .. warning::
+            This **REPLACES** the system trust store; it does **not** append to
+            it. After calling this, only the CA certificate(s) supplied here are
+            trusted when verifying a peer -- the system's default CAs are no
+            longer used. If you also need to trust CAs from the system store,
+            include them in the file(s) you supply.
+
+            For AWS IoT endpoints using Amazon Trust Services (ATS), the supplied
+            PEM must contain the **complete** Amazon Trust Services anchor set
+            (Amazon Root CA 1 (RSA), Amazon Root CA 3 (ECC), and the Starfield
+            cross-sign root), because the presented chain may anchor at any of
+            them. Supplying only one is a common cause of untrusted-certificate
+            handshake failures.
+
         Args:
             ca_dirpath (Optional[str]): Path to directory containing
                 trusted certificates, which will overrides the default trust store.
@@ -588,6 +617,20 @@ class TlsContextOptions:
 
     def override_default_trust_store(self, rootca_buffer):
         """Override default trust store.
+
+        .. warning::
+            This **REPLACES** the system trust store; it does **not** append to
+            it. After calling this, only the CA certificate(s) in ``rootca_buffer``
+            are trusted when verifying a peer -- the system's default CAs are no
+            longer used. If you also need to trust CAs from the system store,
+            include them in ``rootca_buffer``.
+
+            For AWS IoT endpoints using Amazon Trust Services (ATS), the buffer
+            must contain the **complete** Amazon Trust Services anchor set
+            (Amazon Root CA 1 (RSA), Amazon Root CA 3 (ECC), and the Starfield
+            cross-sign root), because the presented chain may anchor at any of
+            them. Supplying only one is a common cause of untrusted-certificate
+            handshake failures.
 
         Args:
             rootca_buffer (bytes): PEM armored chain of trusted CA certificates.
