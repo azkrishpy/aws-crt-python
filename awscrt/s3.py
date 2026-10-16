@@ -310,7 +310,7 @@ class S3Client(NativeResource):
 
     Keyword Args:
         bootstrap (Optional [ClientBootstrap]): Client bootstrap to use when initiating socket connection.
-            If None, aws-c-s3 creates a default bootstrap with at most 96 event loops.
+            If None, a default bootstrap is created with ClientBootstrap.new_s3_default().
             If None is provided, the default singleton is used.
 
         region (str): Region that the S3 bucket lives in.
@@ -451,6 +451,9 @@ class S3Client(NativeResource):
 
         self._region = region
         self.shutdown_event = shutdown_event
+
+        if not bootstrap:
+            bootstrap = ClientBootstrap.new_s3_default()
 
         s3_client_core = _S3ClientCore(
             bootstrap,

@@ -408,7 +408,7 @@ PyObject *aws_py_s3_default_client_bootstrap(PyObject *self, PyObject *args) {
 
     struct aws_allocator *allocator = aws_py_get_allocator();
     struct client_bootstrap_binding *bootstrap = aws_mem_calloc(allocator, 1, sizeof(struct client_bootstrap_binding));
-    bootstrap->native = aws_s3_default_client_bootstrap(allocator);
+    bootstrap->native = aws_s3_default_client_bootstrap(allocator, NULL);
     if (!bootstrap->native) {
         aws_mem_release(allocator, bootstrap);
         return PyErr_AwsLastError();

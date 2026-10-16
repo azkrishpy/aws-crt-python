@@ -195,7 +195,7 @@ class ClientBootstrap(NativeResource):
     @staticmethod
     def new_s3_default():
         '''
-        Create a ClientBootstrap with aws-c-s3's default event loop group and host resolver.
+        Create a ClientBootstrap with aws_s3_default_client_bootstrap(): its own event loop group and host resolver.
         The event loop group has at most 96 event loops. `shutdown_event` is None for this bootstrap.
         '''
         bootstrap = ClientBootstrap.__new__(ClientBootstrap)
