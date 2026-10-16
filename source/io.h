@@ -53,6 +53,7 @@ PyObject *aws_py_host_resolver_new_default(PyObject *self, PyObject *args);
  * Create a new client_bootstrap to be managed by a Python Capsule.
  */
 PyObject *aws_py_client_bootstrap_new(PyObject *self, PyObject *args);
+PyObject *aws_py_s3_default_client_bootstrap(PyObject *self, PyObject *args);
 
 /**
  * Create a new tls_ctx to be managed by a Python Capsule.

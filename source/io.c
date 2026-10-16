@@ -7,6 +7,7 @@
 #include <aws/common/atomics.h>
 
 #include <aws/io/channel_bootstrap.h>
+#include <aws/s3/s3_client.h>
 #include <aws/io/event_loop.h>
 #include <aws/io/socket.h>
 #include <aws/io/stream.h>
@@ -323,6 +324,10 @@ static void s_client_bootstrap_capsule_destructor(PyObject *bootstrap_capsule) {
         PyCapsule_GetPointer(bootstrap_capsule, s_capsule_name_client_bootstrap);
 
     aws_client_bootstrap_release(bootstrap->native);
+    if (!bootstrap->shutdown_complete) {
+        /* No shutdown callback will fire to free the binding (see aws_py_s3_default_client_bootstrap). */
+        aws_mem_release(aws_py_get_allocator(), bootstrap);
+    }
 }
 
 PyObject *aws_py_client_bootstrap_new(PyObject *self, PyObject *args) {
@@ -394,6 +399,28 @@ error:
         aws_mem_release(allocator, bootstrap);
     }
     return NULL;
+}
+
+/* Wraps aws_s3_default_client_bootstrap(): a bootstrap with its own event loop group (at most 96 event loops). */
+PyObject *aws_py_s3_default_client_bootstrap(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
+
+    struct aws_allocator *allocator = aws_py_get_allocator();
+    struct client_bootstrap_binding *bootstrap = aws_mem_calloc(allocator, 1, sizeof(struct client_bootstrap_binding));
+    bootstrap->native = aws_s3_default_client_bootstrap(allocator);
+    if (!bootstrap->native) {
+        aws_mem_release(allocator, bootstrap);
+        return PyErr_AwsLastError();
+    }
+
+    PyObject *capsule =
+        PyCapsule_New(bootstrap, s_capsule_name_client_bootstrap, s_client_bootstrap_capsule_destructor);
+    if (!capsule) {
+        aws_client_bootstrap_release(bootstrap->native);
+        aws_mem_release(allocator, bootstrap);
+    }
+    return capsule;
 }
 
 struct aws_client_bootstrap *aws_py_get_client_bootstrap(PyObject *client_bootstrap) {

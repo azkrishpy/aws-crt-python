@@ -193,6 +193,18 @@ class ClientBootstrap(NativeResource):
         self._binding = _awscrt.client_bootstrap_new(event_loop_group, host_resolver, on_shutdown)
 
     @staticmethod
+    def new_s3_default():
+        '''
+        Create a ClientBootstrap with aws-c-s3's default event loop group and host resolver.
+        The event loop group has at most 96 event loops. `shutdown_event` is None for this bootstrap.
+        '''
+        bootstrap = ClientBootstrap.__new__(ClientBootstrap)
+        NativeResource.__init__(bootstrap)
+        bootstrap.shutdown_event = None
+        bootstrap._binding = _awscrt.s3_default_client_bootstrap()
+        return bootstrap
+
+    @staticmethod
     def get_or_create_static_default():
         with ClientBootstrap._static_client_bootstrap_lock:
             if ClientBootstrap._static_client_bootstrap is None:

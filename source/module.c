@@ -944,6 +944,7 @@ static PyMethodDef s_module_methods[] = {
     AWS_PY_METHOD_DEF(event_loop_group_new, METH_VARARGS),
     AWS_PY_METHOD_DEF(host_resolver_new_default, METH_VARARGS),
     AWS_PY_METHOD_DEF(client_bootstrap_new, METH_VARARGS),
+    AWS_PY_METHOD_DEF(s3_default_client_bootstrap, METH_NOARGS),
     AWS_PY_METHOD_DEF(client_tls_ctx_new, METH_VARARGS),
     AWS_PY_METHOD_DEF(tls_connections_options_new_from_ctx, METH_VARARGS),
     AWS_PY_METHOD_DEF(tls_connection_options_set_alpn_list, METH_VARARGS),
