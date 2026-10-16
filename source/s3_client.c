@@ -304,9 +304,13 @@ PyObject *aws_py_s3_client_new(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    struct aws_client_bootstrap *bootstrap = aws_py_get_client_bootstrap(bootstrap_py);
-    if (!bootstrap) {
-        return NULL;
+    /* None: aws-c-s3 creates the default bootstrap (aws_s3_default_client_bootstrap). */
+    struct aws_client_bootstrap *bootstrap = NULL;
+    if (bootstrap_py != Py_None) {
+        bootstrap = aws_py_get_client_bootstrap(bootstrap_py);
+        if (!bootstrap) {
+            return NULL;
+        }
     }
 
     struct aws_credentials_provider *credential_provider = NULL;
