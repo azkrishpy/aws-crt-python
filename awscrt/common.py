@@ -20,6 +20,13 @@ def get_cpu_count_for_group(group_idx: int) -> int:
     return _awscrt.get_cpu_count_for_group(group_idx)
 
 
+def get_processor_count() -> int:
+    """
+    Returns the number of online logical processors, as the CRT counts them.
+    """
+    return _awscrt.get_processor_count()
+
+
 def join_all_native_threads(*, timeout_sec: float = -1.0) -> bool:
     """
     Waits for all native threads to complete their join call.

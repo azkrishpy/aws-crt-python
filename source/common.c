@@ -7,6 +7,12 @@
 #include <aws/common/system_info.h>
 #include <aws/common/thread.h>
 
+PyObject *aws_py_get_processor_count(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
+    return PyLong_FromSize_t(aws_system_info_processor_count());
+}
+
 PyObject *aws_py_get_cpu_group_count(PyObject *self, PyObject *args) {
     (void)self;
     (void)args;

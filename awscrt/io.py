@@ -10,8 +10,8 @@ Long-running event-loop threads are used for concurrency.
 
 import _awscrt
 from awscrt import NativeResource
+from awscrt.common import get_processor_count
 from enum import IntEnum
-import os
 import threading
 from typing import Union
 
@@ -70,10 +70,10 @@ def set_log_level(log_level):
 _STATIC_DEFAULT_MAX_EVENT_LOOPS = 96
 
 
-def _static_default_num_threads(cpu_count=None):
-    # None keeps the aws-c-io default (half the logical CPUs). Only a larger default is capped.
-    cpu_count = cpu_count or os.cpu_count() or 1
-    default = cpu_count // 2 if cpu_count > 1 else cpu_count
+def _static_default_num_threads(processor_count=None):
+    # None keeps the aws-c-io default (half the processors). Only a larger default is capped.
+    processor_count = processor_count or get_processor_count()
+    default = processor_count // 2 if processor_count > 1 else processor_count
     return _STATIC_DEFAULT_MAX_EVENT_LOOPS if default > _STATIC_DEFAULT_MAX_EVENT_LOOPS else None
 
 

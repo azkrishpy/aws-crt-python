@@ -6,6 +6,9 @@ from awscrt.common import *
 
 
 class TestSystemInfo(NativeResourceTest):
+    def test_get_processor_count(self):
+        self.assertGreater(get_processor_count(), 0)
+
     def test_get_cpu_group_count(self):
         self.assertGreater(get_cpu_group_count(), 0)
 

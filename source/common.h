@@ -11,6 +11,7 @@
 
 #include "module.h"
 
+PyObject *aws_py_get_processor_count(PyObject *self, PyObject *args);
 PyObject *aws_py_get_cpu_group_count(PyObject *self, PyObject *args);
 PyObject *aws_py_get_cpu_count_for_group(PyObject *self, PyObject *args);
 

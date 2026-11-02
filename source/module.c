@@ -932,6 +932,7 @@ static PyMethodDef s_module_methods[] = {
     AWS_PY_METHOD_DEF(get_error_name, METH_VARARGS),
     AWS_PY_METHOD_DEF(get_error_message, METH_VARARGS),
     AWS_PY_METHOD_DEF(get_corresponding_builtin_exception, METH_VARARGS),
+    AWS_PY_METHOD_DEF(get_processor_count, METH_NOARGS),
     AWS_PY_METHOD_DEF(get_cpu_group_count, METH_VARARGS),
     AWS_PY_METHOD_DEF(get_cpu_count_for_group, METH_VARARGS),
     AWS_PY_METHOD_DEF(native_memory_usage, METH_NOARGS),
