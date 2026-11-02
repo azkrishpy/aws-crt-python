@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0.
 
 from awscrt.io import *
+from awscrt.io import _static_default_num_threads
 from awscrt.logging import init_logging, set_log_level, log, LogSubject
 from test import NativeResourceTest, TIMEOUT
 import io
@@ -12,6 +13,12 @@ import unittest
 
 
 class EventLoopGroupTest(NativeResourceTest):
+    def test_static_default_num_threads_is_capped(self):
+        self.assertIsNone(_static_default_num_threads(64))
+        self.assertIsNone(_static_default_num_threads(192))  # default of 96 is at the limit
+        self.assertEqual(96, _static_default_num_threads(194))
+        self.assertEqual(96, _static_default_num_threads(448))
+
     def test_init_defaults(self):
         event_loop_group = EventLoopGroup()
 

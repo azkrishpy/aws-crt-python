@@ -11,6 +11,7 @@ Long-running event-loop threads are used for concurrency.
 import _awscrt
 from awscrt import NativeResource
 from enum import IntEnum
+import os
 import threading
 from typing import Union
 
@@ -65,6 +66,17 @@ def set_log_level(log_level):
     _awscrt.set_log_level(log_level)
 
 
+# Upper limit on the event loops of the static default EventLoopGroup, to keep large hosts under the fd limit.
+_STATIC_DEFAULT_MAX_EVENT_LOOPS = 96
+
+
+def _static_default_num_threads(cpu_count=None):
+    # None keeps the aws-c-io default (half the logical CPUs). Only a larger default is capped.
+    cpu_count = cpu_count or os.cpu_count() or 1
+    default = cpu_count // 2 if cpu_count > 1 else cpu_count
+    return _STATIC_DEFAULT_MAX_EVENT_LOOPS if default > _STATIC_DEFAULT_MAX_EVENT_LOOPS else None
+
+
 class EventLoopGroup(NativeResource):
     """A collection of event-loops.
 
@@ -115,7 +127,7 @@ class EventLoopGroup(NativeResource):
     def get_or_create_static_default():
         with EventLoopGroup._static_event_loop_group_lock:
             if EventLoopGroup._static_event_loop_group is None:
-                EventLoopGroup._static_event_loop_group = EventLoopGroup()
+                EventLoopGroup._static_event_loop_group = EventLoopGroup(_static_default_num_threads())
             return EventLoopGroup._static_event_loop_group
 
     @staticmethod
